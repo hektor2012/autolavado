@@ -1,7 +1,6 @@
-// backend/routes/servicios.js
 const express = require('express');
 const router = express.Router();
-const db = require('../db/database'); // ✅ Única conexión compartida
+const db = require('../db/database');
 
 // ==============================
 // Obtener servicios por fecha
@@ -13,25 +12,24 @@ router.get('/', (req, res) => {
   inicio = inicio || hoy;
   fin = fin || hoy;
 
-  const inicioCompleto = `${inicio}T00:00:00`;
-  const finCompleto = `${fin}T23:59:59`;
+  const inicioCompleto = `${inicio} 00:00:00`;
+  const finCompleto = `${fin} 23:59:59`;
 
   const stmt = db.prepare(`
-    SELECT * FROM servicios
+    SELECT id, paquete, precio, marca, modelo, whatsapp, notificar, turno_id, folio,
+           strftime('%Y-%m-%d %H:%M:%S', fecha) AS fecha
+    FROM servicios
     WHERE datetime(fecha) BETWEEN datetime(?) AND datetime(?)
     ORDER BY fecha DESC
   `);
 
-  const servicios = stmt.all(inicioCompleto, finCompleto).map(s => {
-    const fechaLocal = new Date(s.fecha);
-    return {
-      ...s,
-      fecha: fechaLocal.toLocaleDateString('es-MX'),
-      hora: fechaLocal.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
-    };
-  });
-
-  res.json(servicios);
+  try {
+    const servicios = stmt.all(inicioCompleto, finCompleto);
+    res.json(servicios);
+  } catch (error) {
+    console.error("❌ Error al obtener servicios:", error.message);
+    res.status(500).json({ error: "Error al obtener servicios" });
+  }
 });
 
 // ==============================
@@ -40,7 +38,6 @@ router.get('/', (req, res) => {
 router.post('/registrar', (req, res) => {
   try {
     const { paquete, precio, marca, modelo, whatsapp, notificar, folio } = req.body;
-
     const turno_id = 0; // ← Fijamos temporalmente
 
     const stmt = db.prepare(`
@@ -66,9 +63,6 @@ router.post('/registrar', (req, res) => {
   }
 });
 
-
-
-
 // ==============================
 // Borrar todos los servicios
 // ==============================
@@ -81,6 +75,10 @@ router.delete('/borrar-todos', (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
+// ==============================
+// Servicios pendientes de notificar
+// ==============================
 router.get('/pendientes-notificar', (req, res) => {
   try {
     const servicios = db.prepare(`
@@ -96,6 +94,10 @@ router.get('/pendientes-notificar', (req, res) => {
     res.status(500).json({ error: "Error interno" });
   }
 });
+
+// ==============================
+// Marcar servicio como notificado
+// ==============================
 router.post('/marcar-notificado', (req, res) => {
   const { folio } = req.body;
 
@@ -109,7 +111,5 @@ router.post('/marcar-notificado', (req, res) => {
     res.status(500).json({ error: "Error al actualizar" });
   }
 });
-
-
 
 module.exports = router;

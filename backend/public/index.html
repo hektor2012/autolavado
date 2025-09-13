@@ -5,10 +5,10 @@
   <title>AUTOLAVADO FAD</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
-
 <body>
-
-  <!-- MODAL LOGIN -->
+  <!-- ============================== -->
+  <!-- MODAL LOGIN                   -->
+  <!-- ============================== -->
   <div id="loginModal" class="modal" style="display:flex;">
     <div class="modal-contenido">
       <h2>Iniciar Sesión</h2>
@@ -20,6 +20,9 @@
     </div>
   </div>
 
+  <!-- ============================== -->
+  <!-- BARRA SUPERIOR                 -->
+  <!-- ============================== -->
   <div class="user-box">
     <span id="usuarioActual"></span>
     <button onclick="mostrarLoginModal()">👤</button>
@@ -34,12 +37,13 @@
     </div>
   </div>
 
+  <!-- ============================== -->
+  <!-- BOTONES PRINCIPALES           -->
+  <!-- ============================== -->
   <div class="main-buttons">
     <button id="btnLavado">Ventas</button>
     <button id="btnReporte">Reporte Lavados</button>
-    <!-- Botón para abrir notificaciones -->
-<button id="btnNotificaciones">🔔 Notificaciones</button>
-
+    <button id="btnNotificaciones">🔔 Notificaciones</button>
   </div>
 
   <div class="paquetes-container" id="contenedor-paquetes"></div>
@@ -48,18 +52,17 @@
     <img src="img/logo.jpg" alt="Logo Estética Automotriz">
   </div>
 
-  <!-- MODAL SERVICIO -->
+  <!-- ============================== -->
+  <!-- MODAL SERVICIO                -->
+  <!-- ============================== -->
   <div class="modal" id="modal-servicio">
     <div class="modal-content">
       <h3 id="modal-paquete-nombre"></h3>
       <p id="modal-paquete-precio"></p>
-
       <input type="text" id="input-marca" placeholder="Marca del vehículo">
       <input type="text" id="input-modelo" placeholder="Modelo del vehículo">
       <input type="tel" id="input-whatsapp" placeholder="WhatsApp (opcional)">
-      
       <label><input type="checkbox" id="input-notificar"> Enviar mensaje cuando esté listo</label>
-
       <div class="modal-buttons">
         <button id="btn-modal-aceptar">Aceptar</button>
         <button id="btn-modal-cancelar">Cancelar</button>
@@ -67,15 +70,15 @@
     </div>
   </div>
 
-  <!-- MODAL AJUSTES -->
+  <!-- ============================== -->
+  <!-- MODAL AJUSTES                 -->
+  <!-- ============================== -->
   <div class="modal" id="modal-ajustes">
     <div class="modal-content ajustes">
       <div class="tabs">
         <button class="tab-btn active" onclick="cambiarTab('generales')">Generales</button>
         <button class="tab-btn" onclick="cambiarTab('paquetes')">Paquetes</button>
         <button class="tab-btn" id="btnUsuariosTab" onclick="cambiarTab('usuarios')">Usuarios</button>
-
-        
       </div>
 
       <!-- TAB GENERALES -->
@@ -96,8 +99,6 @@
         <label>Logo del autolavado:</label>
         <input type="file" id="aj-logo" accept="image/*">
         <img id="vista-logo" src="" alt="Logo" style="max-height: 80px; margin-top: 10px;">
-
-
         <div class="modal-buttons">
           <button id="btn-guardar-ajustes">Guardar</button>
           <button onclick="cerrarModalAjustes()">Cancelar</button>
@@ -129,6 +130,23 @@
         </div>
       </div>
 
+      <!-- MODAL EDITAR PAQUETE -->
+      <div id="modalEditarPaquete" class="modal" style="display:none;">
+        <div class="modal-content">
+          <h3>Editar Paquete</h3>
+          <input type="hidden" id="editarId">
+          <input type="text" id="editarNombre" placeholder="Nombre">
+          <input type="number" id="editarPrecio" placeholder="Precio">
+          <label>Color fondo:</label>
+          <input type="color" id="editarColorFondo">
+          <label>Color texto:</label>
+          <input type="color" id="editarColorTexto">
+          <br><br>
+          <button onclick="guardarCambiosPaquete()">Guardar Cambios</button>
+          <button onclick="cerrarModalEditar()">Cancelar</button>
+        </div>
+      </div>
+
       <!-- TAB USUARIOS -->
       <div class="tab-section" id="tab-usuarios" style="display: none;">
         <h3>👥 Gestión de Usuarios</h3>
@@ -140,23 +158,21 @@
           <option value="admin">Administrador</option>
         </select>
         <button onclick="crearUsuario()">Crear</button>
-
         <hr style="margin: 20px 0;">
-
         <h4>Cambiar contraseña de un usuario</h4>
         <select id="selectUsuario"></select>
         <input type="password" id="claveNueva" placeholder="Nueva contraseña">
         <button onclick="cambiarClave()">Cambiar clave</button>
-
         <button onclick="eliminarUsuario()" style="margin-top: 10px; background-color: crimson; color: white;">
-        🗑️ Eliminar usuario
+          🗑️ Eliminar usuario
         </button>
-
       </div>
     </div>
   </div>
 
-  <!-- MODAL REPORTES -->
+  <!-- ============================== -->
+  <!-- MODAL REPORTES                -->
+  <!-- ============================== -->
   <div class="modal" id="modal-reportes">
     <div class="modal-content reportes">
       <h2 style="text-align:center;">📋 Reporte de Lavados</h2>
@@ -170,7 +186,7 @@
           <input type="date" id="filtro-fin">
         </div>
         <div style="align-self: end;">
-          <button id="btn-buscar-reporte">🔍 Buscar</button>
+          <button id="btn-buscar-reporte">Buscar</button>
           <button id="btn-corte">🧾 Corte de Caja</button>
           <button id="btn-exportar-excel">📤 Exportar Excel</button>
           <button onclick="cerrarModalReporte()">❌ Salir</button>
@@ -192,33 +208,56 @@
         <strong>Total del Día: $<span id="total-dia">0.00</span></strong><br>
         <strong>Total de Servicios: <span id="total-servicios">0</span></strong>
       </div>
+      <div id="corte-caja" style="display: none; border-top: 1px solid #ccc; margin-top: 20px; padding-top: 10px;">
+        <h3>🧾 Corte de Caja</h3>
+        <div id="detalle-corte"></div>
+        <div style="margin-top:10px;">
+          <button onclick="window.print()">🖨 Imprimir</button>
+          <button onclick="document.getElementById('corte-caja').style.display = 'none'">❌ Ocultar</button>
+          <button onclick="cerrarTurno()">🔒 Cerrar Turno</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Modal de notificaciones -->
-<div id="modal-notificaciones" class="modal" style="display:none;">
-  <div class="modal-content" style="width: 90%; max-width: 600px;">
-    <h3>🚘 Vehículos pendientes de notificar</h3>
-    <table style="width: 100%; border-collapse: collapse;" id="tabla-notificaciones">
-      <thead>
-        <tr>
-          <th>Folio</th>
-          <th>Marca</th>
-          <th>Modelo</th>
-          <th>WhatsApp</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <br>
-    <button onclick="cerrarModalNotificaciones()">Cerrar</button>
+  <!-- ============================== -->
+  <!-- MODAL NOTIFICACIONES          -->
+  <!-- ============================== -->
+  <div id="modal-notificaciones" class="modal" style="display:none;">
+    <div class="modal-content" style="width: 90%; max-width: 600px;">
+      <h3>🚘 Vehículos pendientes de notificar</h3>
+      <table style="width: 100%; border-collapse: collapse;" id="tabla-notificaciones">
+        <thead>
+          <tr>
+            <th>Folio</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>WhatsApp</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <br>
+      <button onclick="cerrarModalNotificaciones()">Cerrar</button>
+    </div>
   </div>
-</div>
 
+  <!-- ============================== -->
+  <!-- MODAL TURNO                   -->
+  <!-- ============================== -->
+  <div id="modal-turno" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h2>Iniciar Turno</h2>
+      <label>Operador:</label>
+      <input type="text" id="turno-operador" placeholder="Nombre del operador">
+      <label>Clave:</label>
+      <input type="password" id="turno-clave" placeholder="Contraseña">
+      <button onclick="iniciarTurno()">Iniciar turno</button>
+    </div>
+  </div>
 
   <script src="js/main.js" defer></script>
   <iframe id="ticket-frame" style="display:none;"></iframe>
-
 </body>
 </html>
